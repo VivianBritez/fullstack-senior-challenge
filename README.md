@@ -8,7 +8,7 @@ el resultado con las instrucciones instruciones de entrega
 ## 📓 Caso
 Se necesita crear una API interna que registre las solicitudes de cambio de moneda de los clientes.
 Como una operación de cambio necesita el TC (tipo de cambio) para poder realizar la conversión de la moneda,
-es necesario guardar el tipo de cambio de un proveedor cada 30 segundos.
+es necesario   guardar el tipo de cambio de un proveedor cada 30 segundos.
 Se cuenta con la siguiente API para obtener el tipo de cambio de un proveedor:
 `https://api.apis.net.pe/v1/tipo-cambio-sunat`
 
