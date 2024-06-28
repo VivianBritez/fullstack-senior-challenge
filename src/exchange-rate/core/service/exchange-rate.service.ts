@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ChangeRateInfoService } from '../../infrastructure/external-services/change';
 import { Cron, CronExpression } from '@nestjs/schedule';
-import { ExchangeRepository } from 'src/exchange-rate/infrastructure/repository/exchange.repository';
+import { ExchangeRepository } from '../../infrastructure/repository/exchange.repository';
 
 @Injectable()
 export class ExchangeRateService {

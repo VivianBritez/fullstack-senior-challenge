@@ -1,9 +1,13 @@
+export enum Currency {
+  USD = 'USD',
+  PEN = 'PEN',
+}
+
 export class Transaction {
-    monedaOrigen: string;
-    monedaDestino: string;
-    monto: number;
-    montoCambiado: number;
-    tipoCambio: number;
-    userId: string
-  }
-  
+  monedaOrigen: Currency;
+  monedaDestino: Currency;
+  monto: number;
+  montoCambiado: number;
+  tipoCambio: number;
+  userId: string;
+}

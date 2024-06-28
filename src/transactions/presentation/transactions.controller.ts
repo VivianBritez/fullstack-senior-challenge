@@ -2,9 +2,9 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, Request, UseGuards }
 import { TransactionsService } from '../core/service/transactions.service';
 import { CreateTransactionDto } from '../core/dto/create-transaction.dto';
 import { UpdateTransactionDto } from '../core/dto/update-transaction.dto';
-import { HttpResponseService } from 'src/shared/httpCode/api-response.service';
+import { HttpResponseService } from '../../shared/httpCode/api-response.service';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { JwtAuthGuard } from 'src/auth/core/domain/jwt-auth.guard';
+import { JwtAuthGuard } from '../../auth/core/domain/jwt-auth.guard';
 
 @ApiBearerAuth()
 @ApiTags('transactions')
@@ -56,19 +56,16 @@ export class TransactionsController {
 
   @UseGuards(JwtAuthGuard)
   @Get('byUser')
-  async getExchangeById( @Request() req) {
-    try {
+  async getExchangeById(@Request() req) {
 
-      const transaction = await this.transactionsService.findByUserId(req.user.payload.id);
-      if (!transaction) {
-        return this.httpService.notFoundResponse(`Transaction with ID ${req.user.payload.id} not found`);
-      }
-      return this.httpService.successResponse(transaction, 'List of transaccions')
+    const transaction = await this.transactionsService.findByUserId(req.user.payload.id);
+    if (!transaction) {
+      return this.httpService.notFoundResponse(`Transaction with ID ${req.user.payload.id} not found`);
     }
-    catch (error) {
-      return this.httpService.errorResponse()
-    }
-
+    return this.httpService.successResponse(transaction, 'List of transaccions')
   }
+
+
+
 
 }

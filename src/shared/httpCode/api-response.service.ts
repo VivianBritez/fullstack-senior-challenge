@@ -11,11 +11,11 @@ export class HttpResponseService {
     };
   }
 
-  errorResponse(errorMessage: string, statusCode: HttpStatus = HttpStatus.BAD_REQUEST) {
+  errorResponse(statusCode: HttpStatus = HttpStatus.BAD_REQUEST) {
     throw new HttpException(
       {
         statusCode,
-        message: errorMessage,
+        message: 'Internal server error',
       },
       statusCode,
     );

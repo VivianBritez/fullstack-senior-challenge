@@ -1,9 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { CreateTransactionDto } from '../dto/create-transaction.dto';
 import { UpdateTransactionDto } from '../dto/update-transaction.dto';
-import { ExchangeRateService } from 'src/exchange-rate/core/service/exchange-rate.service';
+import { ExchangeRateService } from '../../../exchange-rate/core/service/exchange-rate.service';
 import { Transaction } from '../entities/transaction.entity';
-import { TransactionRepository } from 'src/transactions/infrastructure/repository/transactions.repository';
+import { TransactionRepository } from '../../infrastructure/repository/transactions.repository';
+
+
+enum Currency {
+  USD = 'USD',
+  PEN = 'PEN',
+}
 
 @Injectable()
 export class TransactionsService {
@@ -29,14 +35,17 @@ export class TransactionsService {
 
   private calculateChange(createTransactionDto: CreateTransactionDto, data, userId): Transaction {
 
+    const { monto, monedaOrigen, monedaDestino } = createTransactionDto;
+
+    if (!Object.values(Currency).includes(monedaOrigen) || !Object.values(Currency).includes(monedaDestino)) {
+      throw new Error('Invalid currency. Only USD and PEN are allowed.');
+    }
     console.log("calculate change", createTransactionDto, data, userId)
-    const change = createTransactionDto.monto;
     const typeOfMoney = createTransactionDto.monedaOrigen;
     const exchangeRate = typeOfMoney == 'USD' ? data.compra : data.venta
-    const amountChange = parseFloat((change * exchangeRate).toFixed(2));
+    const amountChange = parseFloat((monto * exchangeRate).toFixed(2));
     return {
       ...createTransactionDto,
-      monto: change,
       montoCambiado: amountChange,
       tipoCambio: exchangeRate,
       userId: userId
@@ -66,6 +75,7 @@ export class TransactionsService {
 
   async findByUserId(userID) {
     try {
+      
       const data =await this.transactionRepository.findByUserId(userID)
       console.log("data", data)
       return data;

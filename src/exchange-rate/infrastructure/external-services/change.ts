@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { HttpService } from 'src/http-request/core/service/http-request.service';
+import { HttpService } from '../../../http-request/core/service/http-request.service';
 import { envs } from "../../../config/envs";
 
 
