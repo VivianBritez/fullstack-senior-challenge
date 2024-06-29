@@ -1,5 +1,5 @@
 # Stage 1: Build
-FROM node:14-alpine AS builder
+FROM node:14-buster-slim AS builder
 
 WORKDIR /app
 
@@ -15,7 +15,7 @@ COPY . .
 RUN npm run build
 
 # Stage 2: Production
-FROM node:14-alpine
+FROM node:14-buster-slim
 
 WORKDIR /app
 

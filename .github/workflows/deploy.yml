@@ -9,12 +9,10 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
 
-    env:
-      PORT: ${{ secrets.PORT }}
-      JWT_SECRET: ${{ secrets.JWT_SECRET }}
-      URL_SUNAT: ${{ secrets.URL_SUNAT }}
-
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
       - name: SSH into EC2 instance
         uses: appleboy/ssh-action@master
         with:
