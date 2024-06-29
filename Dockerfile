@@ -6,6 +6,7 @@ WORKDIR /app
 COPY package*.json ./
 
 RUN npm cache clean --force
+RUN npm install --save-dev webpack
 RUN npm install
 RUN npm ls --depth 0
 

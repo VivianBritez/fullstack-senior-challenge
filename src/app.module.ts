@@ -7,7 +7,6 @@ import { PassportModule } from '@nestjs/passport';
 import { ExchangeRateModule } from './exchange-rate/exchange-rate.module';
 import { HttpRequestModule } from './http-request/http-request.module';
 import { TransactionsModule } from './transactions/transactions.module';
-import { UtilsModule } from './utils/utils.module';
 
 @Module({
   imports: [
@@ -16,8 +15,7 @@ import { UtilsModule } from './utils/utils.module';
     AuthModule,
     ExchangeRateModule,
     HttpRequestModule,
-    TransactionsModule,
-    UtilsModule
+    TransactionsModule
   ],
 })
 export class AppModule {}
