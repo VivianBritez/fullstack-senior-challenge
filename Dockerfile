@@ -1,21 +1,18 @@
 # Stage 1: Build
-FROM node:14-buster-slim AS builder
+FROM node:14-alpine AS builder
 
 WORKDIR /app
 
 COPY package*.json ./
 
-RUN npm cache clean --force
-RUN npm install --save-dev webpack
 RUN npm install
-RUN npm ls --depth 0
 
 COPY . .
 
 RUN npm run build
 
 # Stage 2: Production
-FROM node:14-buster-slim
+FROM node:14-alpine
 
 WORKDIR /app
 
