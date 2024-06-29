@@ -15,22 +15,6 @@ jobs:
       URL_SUNAT: ${{ secrets.URL_SUNAT }}
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Set up Docker Buildx
-        id: buildx
-        uses: docker/setup-buildx-action@v1
-
-      - name: Build and push Docker image
-        env:
-          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-        run: |
-          docker buildx build --platform linux/amd64,linux/arm64 -t laboratoria013/backend-kambista:latest .
-          echo "${DOCKER_PASSWORD}" | docker login -u "${DOCKER_USERNAME}" --password-stdin
-          docker push laboratoria013/backend-kambista:latest
-
       - name: SSH into EC2 instance
         uses: appleboy/ssh-action@master
         with:
