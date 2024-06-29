@@ -27,9 +27,9 @@ jobs:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
         run: |
-          docker buildx build --platform linux/amd64,linux/arm64 -t your-dockerhub-username/your-image-name:latest .
+          docker buildx build --platform linux/amd64,linux/arm64 -t laboratoria013/backend-kambista:latest .
           echo "${DOCKER_PASSWORD}" | docker login -u "${DOCKER_USERNAME}" --password-stdin
-          docker push your-dockerhub-username/your-image-name:latest
+          docker push laboratoria013/backend-kambista:latest:latest
 
       - name: SSH into EC2 instance
         uses: appleboy/ssh-action@master
