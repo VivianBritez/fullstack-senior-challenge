@@ -29,7 +29,7 @@ jobs:
         run: |
           docker buildx build --platform linux/amd64,linux/arm64 -t laboratoria013/backend-kambista:latest .
           echo "${DOCKER_PASSWORD}" | docker login -u "${DOCKER_USERNAME}" --password-stdin
-          docker push laboratoria013/backend-kambista:latest:latest
+          docker push laboratoria013/backend-kambista:latest
 
       - name: SSH into EC2 instance
         uses: appleboy/ssh-action@master
@@ -40,6 +40,11 @@ jobs:
           port: 22
           script: |
             echo "SSH connection established."
-            # Ejemplo de comandos a ejecutar en la instancia EC2
             docker pull laboratoria013/backend-kambista:latest
-            docker run -d -p 80:80 laboratoria013/kambista:latest
+            docker stop kambista || true  # Detener el contenedor existente, si existe
+            docker rm kambista || true    # Eliminar el contenedor existente, si existe
+            docker run -d -p 80:3000 --name kambista \
+              -e PORT=${{ secrets.PORT }} \
+              -e JWT_SECRET=${{ secrets.JWT_SECRET }} \
+              -e URL_SUNAT=${{ secrets.URL_SUNAT }} \
+              laboratoria013/backend-kambista:latest
