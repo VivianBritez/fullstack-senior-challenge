@@ -41,5 +41,5 @@ jobs:
           script: |
             echo "SSH connection established."
             # Ejemplo de comandos a ejecutar en la instancia EC2
-            docker pull your-dockerhub-username/your-image-name:latest
-            docker run -d -p 80:80 your-dockerhub-username/your-image-name:latest
+            docker pull laboratoria013/backend-kambista:latest
+            docker run -d -p 80:80 laboratoria013/kambista:latest
