@@ -1,16 +1,18 @@
-version: '3.8'
-
+version: '3'
 services:
   backend:
-    container_name: nestjs
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: always
     ports:
       - "3000:3000"
-    env_file:
-      - .env
-    networks:
-      - backend-network
+    environment:
+      NODE_ENV: development
+      PORT: 3000
+      MONGO_URI: ${MONGO_URI}
+      URL_SUNAT: ${URL_SUNAT}
+      JWT_SECRET: ${JWT_SECRET}
 
-networks:
-  backend-network:
-    driver: bridge
+
+

@@ -1,8 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.envs = void 0;
-require("dotenv/config");
+const dotenv = require("dotenv");
 const joi = require("joi");
+dotenv.config();
 const envsScheme = joi.object({
     PORT: joi.number().required(),
     JWT_SECRET: joi.string().required(),

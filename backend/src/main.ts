@@ -4,7 +4,12 @@ import { ValidationPipe, Logger } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import {  envs } from "./config/envs";
+import * as dotenv from 'dotenv';
+
+dotenv.config();
+
 async function bootstrap() {
+
   const logger  = new Logger('main')
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
@@ -38,7 +43,7 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api/v1/docs', app, document);
 
-  logger.log("envair", envs)
+
   await app.listen(envs.port);
   logger.log("aplication running on port ", envs.port, envs)
 }

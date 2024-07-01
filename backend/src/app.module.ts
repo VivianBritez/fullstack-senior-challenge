@@ -7,9 +7,11 @@ import { HttpRequestModule } from './http-request/http-request.module';
 import { TransactionsModule } from './transactions/transactions.module';
 import { envs } from './config/envs'; 
 import mongoose from "mongoose";
-
+import * as dotenv from 'dotenv';
+dotenv.config();
 const logger = new Logger('AppModule');
 
+console.log("env---- app modules", envs, process.env)
 @Module({
   imports: [
     MongooseModule.forRoot(envs.mongo_url, {

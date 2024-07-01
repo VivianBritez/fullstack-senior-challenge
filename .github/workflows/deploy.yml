@@ -44,4 +44,5 @@ jobs:
               -e PORT=${{ secrets.PORT }} \
               -e JWT_SECRET=${{ secrets.JWT_SECRET }} \
               -e URL_SUNAT=${{ secrets.URL_SUNAT }} \
+              -e MONGO_URI=${{ secrets.MONGO_URI }} \
               laboratoria013/backend-kambista:latest

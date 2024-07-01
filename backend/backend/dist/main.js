@@ -5,7 +5,10 @@ const app_module_1 = require("./app.module");
 const common_1 = require("@nestjs/common");
 const swagger_1 = require("@nestjs/swagger");
 const envs_1 = require("./config/envs");
+const dotenv = require("dotenv");
+dotenv.config();
 async function bootstrap() {
+    console.log("env", process.env, envs_1.envs);
     const logger = new common_1.Logger('main');
     const app = await core_1.NestFactory.create(app_module_1.AppModule);
     app.enableCors({
@@ -28,7 +31,6 @@ async function bootstrap() {
         .build();
     const document = swagger_1.SwaggerModule.createDocument(app, config);
     swagger_1.SwaggerModule.setup('api/v1/docs', app, document);
-    logger.log("envair", envs_1.envs);
     await app.listen(envs_1.envs.port);
     logger.log("aplication running on port ", envs_1.envs.port, envs_1.envs);
 }

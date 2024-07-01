@@ -16,7 +16,10 @@ const http_request_module_1 = require("./http-request/http-request.module");
 const transactions_module_1 = require("./transactions/transactions.module");
 const envs_1 = require("./config/envs");
 const mongoose_2 = require("mongoose");
+const dotenv = require("dotenv");
+dotenv.config();
 const logger = new common_1.Logger('AppModule');
+console.log("env", envs_1.envs, process.env);
 let AppModule = class AppModule {
 };
 AppModule = __decorate([
