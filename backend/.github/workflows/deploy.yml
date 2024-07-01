@@ -1,57 +1,48 @@
-name: Deploy to AWS
+name: Deploy to EC2 with Docker
+
 on:
   push:
     branches:
-      - "main"
-env:
-  AWS_REGION: us-east-1
-  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
-  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-  PRIVATE_SSH_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-  SERVER_PUBLIC_IP: ${{ secrets.EC2_HOST }}
+      - main  
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - name: Login to AWS ECR
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v1
-      - name: Build, push docker image
-        env:
-          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          REPOSITORY: aws-deploy
-          IMAGE_TAG: ${{ github.sha }}
-        run: |-
-          docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
-          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
-      - name: Deploy docker image to EC2
-        env:
-          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          REPOSITORY: fullstack-senior-challenge
-          IMAGE_TAG: ${{ github.sha }}
-          AWS_DEFAULT_REGION: us-east-1
-          PORT: 3000  # Define your PORT here
-          JWT_SECRET: ${{ secrets.JWT_SECRET }}  # Ensure this secret is set in your GitHub repository
-          URL_SUNAT: https://api.sunat.gob.pe  # Example URL, replace with your actual URL
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: SSH into EC2 instance and install Docker
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ env.SERVER_PUBLIC_IP }}
+          host: ${{ secrets.EC2_HOST }}
           username: ubuntu
-          key: ${{ env.PRIVATE_SSH_KEY }}
-          envs: PRIVATE_SSH_KEY,REGISTRY,REPOSITORY,IMAGE_TAG,AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY,AWS_DEFAULT_REGION,AWS_REGION,PORT,JWT_SECRET,URL_SUNAT
-          script: |-
-            sudo apt update
-            sudo apt install docker.io -y
-            sudo apt install awscli -y
-            sudo $(aws ecr get-login --no-include-email --region ap-south-1);
-            sudo docker stop myappcontainer || true
-            sudo docker rm myappcontainer || true
-            sudo docker pull $REGISTRY/$REPOSITORY:$IMAGE_TAG
-            sudo docker run -d --name myappcontainer -p $PORT:3000 \
-              -e PORT=$PORT \
-              -e JWT_SECRET=$JWT_SECRET \
-              -e URL_SUNAT=$URL_SUNAT \
-              $REGISTRY/$REPOSITORY:$IMAGE_TAG
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: 22
+          script: |
+            echo "SSH connection established."
+            sudo apt-get update
+            sudo apt-get install -y docker.io
+            sudo usermod -aG docker ubuntu
+            newgrp docker
+            docker --version
+            
+      - name: Deploy Docker container
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ubuntu
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: 22
+          script: |
+            echo "Deploying Docker container."
+            docker pull laboratoria013/backend-kambista:latest
+            docker stop kambista || true  # Detener el contenedor existente, si existe
+            docker rm kambista || true    # Eliminar el contenedor existente, si existe
+            docker run -d -p 80:80 --name kambista \
+              -e PORT=${{ secrets.PORT }} \
+              -e JWT_SECRET=${{ secrets.JWT_SECRET }} \
+              -e URL_SUNAT=${{ secrets.URL_SUNAT }} \
+              -e MONGO_URI=${{ secrets.MONGO_URI }} \
+              laboratoria013/backend-kambista:latest
