@@ -1,0 +1,47 @@
+name: Deploy to EC2 with Docker
+
+on:
+  push:
+    branches:
+      - main  
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: SSH into EC2 instance and install Docker
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ubuntu
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: 22
+          script: |
+            echo "SSH connection established."
+            sudo apt-get update
+            sudo apt-get install -y docker.io
+            sudo usermod -aG docker ubuntu
+            newgrp docker
+            docker --version
+            
+      - name: Deploy Docker container
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ubuntu
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: 22
+          script: |
+            echo "Deploying Docker container."
+            docker pull laboratoria013/backend-kambista:latest
+            docker stop kambista || true  # Detener el contenedor existente, si existe
+            docker rm kambista || true    # Eliminar el contenedor existente, si existe
+            docker run -d -p 80:80 --name kambista \
+              -e PORT=${{ secrets.PORT }} \
+              -e JWT_SECRET=${{ secrets.JWT_SECRET }} \
+              -e URL_SUNAT=${{ secrets.URL_SUNAT }} \
+              laboratoria013/backend-kambista:latest
